@@ -504,16 +504,17 @@ class SmokingTracker {
             video.srcObject = stream;
             video.play();
             
-            // Create stop button
+            // Create stop button and status
             const qrDisplay = document.getElementById('qrDisplay');
             qrDisplay.innerHTML = `
                 <div>
-                    <p>Point your camera at the QR code</p>
+                    <p id="scanStatus">Point your camera at the QR code</p>
+                    <p style="font-size: 0.8rem; color: #666; margin: 10px 0;">Make sure the QR code is well lit and centered</p>
                     <button onclick="smokingTracker.stopCameraScan()" class="sync-btn" style="background: #dc3545;">Stop Camera</button>
                 </div>
             `;
             
-            // Scan for QR codes every 500ms
+            // Scan for QR codes every 300ms
             this.scanInterval = setInterval(() => {
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     canvas.width = video.videoWidth;
@@ -523,17 +524,35 @@ class SmokingTracker {
                     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                     const code = this.detectQRCode(imageData);
                     
+                    // Update status
+                    const statusEl = document.getElementById('scanStatus');
+                    if (statusEl) {
+                        statusEl.textContent = code ? 'QR Code detected! Processing...' : 'Scanning for QR code...';
+                    }
+                    
                     if (code) {
                         this.processQRData(code);
                         this.stopCameraScan();
                     }
                 }
-            }, 500);
+            }, 300);
             
         } catch (error) {
             console.error('Camera access denied:', error);
-            this.showNotification('Camera access denied. Please use file upload instead.', 'error');
-            document.getElementById('qrFileInput').click();
+            this.showNotification('Camera access denied. Use Export/Import instead.', 'error');
+            
+            // Show fallback options
+            const qrDisplay = document.getElementById('qrDisplay');
+            qrDisplay.innerHTML = `
+                <div>
+                    <p style="color: #dc3545; margin-bottom: 15px;">📷 Camera access denied</p>
+                    <p style="font-size: 0.9rem; margin-bottom: 15px;">Try these alternatives:</p>
+                    <button onclick="document.getElementById('qrFileInput').click()" class="sync-btn">Upload QR Image</button>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+                        Or use Export/Import buttons below for manual file transfer
+                    </p>
+                </div>
+            `;
         }
     }
 
@@ -556,8 +575,11 @@ class SmokingTracker {
     }
 
     detectQRCode(imageData) {
-        // Simple QR detection - in a real app you'd use a library like jsQR
-        // For now, we'll return null and rely on file upload
+        // Use jsQR library to detect QR codes
+        if (typeof jsQR !== 'undefined') {
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            return code ? code.data : null;
+        }
         return null;
     }
 
@@ -565,13 +587,35 @@ class SmokingTracker {
         const file = event.target.files[0];
         if (!file) return;
         
+        this.showNotification('Processing QR image...', 'info');
+        
         const reader = new FileReader();
         reader.onload = (e) => {
-            // In a full implementation, you'd decode the QR from the image
-            // For now, we'll show instructions
-            this.showNotification('Please use a QR code scanner app to read the code and copy the data', 'info');
+            const img = new Image();
+            img.onload = () => {
+                // Create canvas to process the image
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0);
+                
+                // Get image data and try to detect QR code
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = this.detectQRCode(imageData);
+                
+                if (code) {
+                    this.processQRData(code);
+                } else {
+                    this.showNotification('❌ No QR code found in image. Try a clearer photo.', 'error');
+                }
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
+        
+        // Reset file input
+        event.target.value = '';
     }
 
     processQRData(qrData) {
