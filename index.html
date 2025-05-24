@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop Smokin' - Your Journey to Freedom</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚭 Stop Smokin'</h1>
+            <p class="tagline">Your journey to a smoke-free life starts here</p>
+        </header>
+
+        <main>
+            <!-- Tracking Section -->
+            <section class="tracking-section">
+                <div class="smoke-button-container">
+                    <button id="smokeButton" class="smoke-button">I Smoked</button>
+                    <div class="last-smoke">
+                        <span id="lastSmokeTime">Click to track your first cigarette</span>
+                    </div>
+                </div>
+                
+                <div class="timer-display">
+                    <h3>Time Since Last Cigarette</h3>
+                    <div id="smokeFreeTimer" class="timer">00:00:00</div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section class="stats-section">
+                <h3>Your Progress</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCigarettes">0</div>
+                        <div class="stat-label">Total Cigarettes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="longestStreak">0h</div>
+                        <div class="stat-label">Longest Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayCount">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="weekCount">0</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-card trend-card">
+                        <div class="stat-number" id="avgPerDay">0.0</div>
+                        <div class="stat-label">Per Day <span id="dailyTrend" class="trend"></span></div>
+                    </div>
+                    <div class="stat-card trend-card">
+                        <div class="stat-number" id="avgPerWeek">0.0</div>
+                        <div class="stat-label">Per Week <span id="weeklyTrend" class="trend"></span></div>
+                    </div>
+                    <div class="stat-card trend-card">
+                        <div class="stat-number" id="avgPerMonth">0.0</div>
+                        <div class="stat-label">Per Month <span id="monthlyTrend" class="trend"></span></div>
+                    </div>
+                    <div class="stat-card reduction-card">
+                        <div class="stat-number" id="reductionPercent">0%</div>
+                        <div class="stat-label">Reduction vs Peak</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gamification Section -->
+            <section class="gamification-section">
+                <div class="level-progress">
+                    <h3>Level <span id="currentLevel">1</span></h3>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <p>Progress to next level</p>
+                </div>
+
+                <div class="achievements">
+                    <h3>Achievements</h3>
+                    <div id="achievementsList" class="achievements-list">
+                        <!-- Achievements will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health Benefits Section -->
+            <section class="quote-section">
+                <div class="quote-container">
+                    <h3>Your Health Journey</h3>
+                    <blockquote id="motivationalQuote">
+                        "🚭 Every minute without smoking is a victory! Your body is already starting to heal."
+                    </blockquote>
+                    <button id="newQuoteBtn" class="quote-btn">Update Health Status</button>
+                </div>
+            </section>
+
+            <!-- Data Sync Section -->
+            <section class="sync-section">
+                <h3>Sync Your Data</h3>
+                <div class="sync-options">
+                    <div class="sync-group">
+                        <h4>QR Code Sync</h4>
+                        <button id="generateQRBtn" class="sync-btn">Generate QR Code</button>
+                        <button id="scanQRBtn" class="sync-btn">Scan QR Code</button>
+                        <div id="qrDisplay" class="qr-display"></div>
+                        <input type="file" id="qrFileInput" accept="image/*" style="display: none;">
+                        <video id="qrVideo" style="display: none; width: 100%; max-width: 300px; margin: 10px 0;"></video>
+                        <canvas id="qrCanvas" style="display: none;"></canvas>
+                    </div>
+                    
+                    <div class="sync-group">
+                        <h4>Manual Import/Export</h4>
+                        <button id="exportDataBtn" class="sync-btn">Export Data</button>
+                        <button id="importDataBtn" class="sync-btn">Import Data</button>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reset Data Section -->
+            <section class="reset-section">
+                <button id="resetDataBtn" class="reset-btn">Reset All Data</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
